@@ -1,11 +1,11 @@
 name: Build Mush8 iOS IPA
 
 on:
-  workflow_dispatch: # Allows manual trigger via a button
+  workflow_dispatch:
 
 jobs:
   build:
-    runs-on: macos-14 # GitHub-hosted Apple Silicon M1 runner
+    runs-on: macos-14
 
     steps:
       - name: Checkout repository
@@ -19,7 +19,6 @@ jobs:
 
       - name: Set up Rust toolchain
         run: |
-          # Mush8 specifies Rust 1.98.1 for the iOS target
           rustup toolchain install 1.98.1
           rustup default 1.98.1
           rustup target add aarch64-apple-ios --toolchain 1.98.1
@@ -27,6 +26,10 @@ jobs:
       - name: Make scripts executable
         run: |
           chmod +x make-ios.sh build.sh || true
+
+      - name: Inject prod.keys
+        run: |
+          echo "${{ secrets.PROD_KEYS }}" > prod.keys
 
       - name: Build unsigned IPA
         run: |
